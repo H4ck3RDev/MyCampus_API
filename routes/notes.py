@@ -27,6 +27,12 @@ def get_notes():
         }), 200
     except Exception as e:
         import traceback
+        try:
+            with open('error_debug.log','a',encoding='utf8') as _f:
+                _f.write(traceback.format_exc())
+                _f.write('\n---\n')
+        except Exception:
+            pass
         return jsonify({"status": "error", "message": str(e), "traceback": traceback.format_exc()}), 500
 
 
@@ -48,6 +54,12 @@ def get_note(id):
         }), 200
     except Exception as e:
         import traceback
+        try:
+            with open('error_debug.log','a',encoding='utf8') as _f:
+                _f.write(traceback.format_exc())
+                _f.write('\n---\n')
+        except Exception:
+            pass
         return jsonify({"status": "error", "message": str(e), "traceback": traceback.format_exc()}), 500
 
 
@@ -63,14 +75,13 @@ def create_note():
                 "message": "Aucune donnée reçue."
             }), 400
 
-        valeur = data.get("valeur")
         id_etudiant = data.get("id_etudiant")
         id_cours = data.get("id_cours")
 
-        if valeur is None or id_etudiant is None or id_cours is None:
+        if id_etudiant is None or id_cours is None:
             return jsonify({
                 "status": "error",
-                "message": "Les champs valeur, id_etudiant et id_cours sont requis."
+                "message": "Les champs id_etudiant et id_cours sont requis."
             }), 400
 
         etudiant = Etudiant.query.get(id_etudiant)
@@ -88,13 +99,27 @@ def create_note():
                 "message": "Cours introuvable."
             }), 404
 
+        # Accept either individual components or moyenne
+        tp = data.get("tp")
+        interrogation = data.get("interrogation")
+        examen = data.get("examen")
+        moyenne = data.get("moyenne")
+
+        # If moyenne not provided, compute simple average of provided numeric parts
+        numeric_parts = [v for v in (tp, interrogation, examen) if v is not None]
+        if moyenne is None and numeric_parts:
+            try:
+                moyenne = sum([float(v) for v in numeric_parts]) / len(numeric_parts)
+            except Exception:
+                return jsonify({"status": "error", "message": "Les champs tp/interrogation/examen doivent être numériques."}), 400
+
         note = Note(
-            valeur=valeur,
-            type_note=data.get("type_note"),
-            commentaire=data.get("commentaire"),
             id_etudiant=id_etudiant,
             id_cours=id_cours,
-            id_professeur=data.get("id_professeur")
+            tp=tp,
+            interrogation=interrogation,
+            examen=examen,
+            moyenne=moyenne
         )
 
         db.session.add(note)
@@ -107,6 +132,12 @@ def create_note():
         }), 201
     except Exception as e:
         import traceback
+        try:
+            with open('error_debug.log','a',encoding='utf8') as _f:
+                _f.write(traceback.format_exc())
+                _f.write('\n---\n')
+        except Exception:
+            pass
         return jsonify({"status": "error", "message": str(e), "traceback": traceback.format_exc()}), 500
 
 
@@ -148,10 +179,23 @@ def update_note(id):
                 }), 404
             note.id_cours = data["id_cours"]
 
-        note.valeur = data.get("valeur", note.valeur)
-        note.type_note = data.get("type_note", note.type_note)
-        note.commentaire = data.get("commentaire", note.commentaire)
-        note.id_professeur = data.get("id_professeur", note.id_professeur)
+        # Update components if provided
+        if "tp" in data:
+            note.tp = data.get("tp")
+        if "interrogation" in data:
+            note.interrogation = data.get("interrogation")
+        if "examen" in data:
+            note.examen = data.get("examen")
+        if "moyenne" in data:
+            note.moyenne = data.get("moyenne")
+        else:
+            # Recompute moyenne if components provided
+            parts = [v for v in (note.tp, note.interrogation, note.examen) if v is not None]
+            if parts:
+                try:
+                    note.moyenne = sum([float(v) for v in parts]) / len(parts)
+                except Exception:
+                    return jsonify({"status": "error", "message": "Les champs tp/interrogation/examen doivent être numériques."}), 400
 
         db.session.commit()
 
@@ -162,6 +206,12 @@ def update_note(id):
         }), 200
     except Exception as e:
         import traceback
+        try:
+            with open('error_debug.log','a',encoding='utf8') as _f:
+                _f.write(traceback.format_exc())
+                _f.write('\n---\n')
+        except Exception:
+            pass
         return jsonify({"status": "error", "message": str(e), "traceback": traceback.format_exc()}), 500
 
 
@@ -186,4 +236,10 @@ def delete_note(id):
         }), 200
     except Exception as e:
         import traceback
+        try:
+            with open('error_debug.log','a',encoding='utf8') as _f:
+                _f.write(traceback.format_exc())
+                _f.write('\n---\n')
+        except Exception:
+            pass
         return jsonify({"status": "error", "message": str(e), "traceback": traceback.format_exc()}), 500

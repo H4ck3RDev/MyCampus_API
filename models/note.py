@@ -1,5 +1,3 @@
-﻿from datetime import datetime
-
 from database import db
 
 
@@ -11,21 +9,6 @@ class Note(db.Model):
         db.Integer,
         primary_key=True,
         autoincrement=True
-    )
-
-    valeur = db.Column(
-        db.Float,
-        nullable=False
-    )
-
-    type_note = db.Column(
-        db.String(50),
-        nullable=True
-    )
-
-    commentaire = db.Column(
-        db.String(255),
-        nullable=True
     )
 
     id_etudiant = db.Column(
@@ -44,17 +27,24 @@ class Note(db.Model):
         nullable=False
     )
 
-    id_professeur = db.Column(
-        db.Integer,
-        db.ForeignKey(
-            "professeurs.id_professeur"
-        ),
+    tp = db.Column(
+        db.Numeric(5, 2),
         nullable=True
     )
 
-    date_creation = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
+    interrogation = db.Column(
+        db.Numeric(5, 2),
+        nullable=True
+    )
+
+    examen = db.Column(
+        db.Numeric(5, 2),
+        nullable=True
+    )
+
+    moyenne = db.Column(
+        db.Numeric(5, 2),
+        nullable=True
     )
 
     etudiant = db.relationship(
@@ -67,24 +57,16 @@ class Note(db.Model):
         backref="notes"
     )
 
-    professeur = db.relationship(
-        "Professeur",
-        backref="notes"
-    )
-
     def to_dict(self):
-
         return {
             "id_note": self.id_note,
-            "valeur": self.valeur,
-            "type_note": self.type_note,
-            "commentaire": self.commentaire,
             "id_etudiant": self.id_etudiant,
             "nom_etudiant": self.etudiant.utilisateur.nom if self.etudiant and self.etudiant.utilisateur else None,
             "prenom_etudiant": self.etudiant.utilisateur.prenom if self.etudiant and self.etudiant.utilisateur else None,
             "id_cours": self.id_cours,
             "cours": self.cours.nom_cours if self.cours else None,
-            "id_professeur": self.id_professeur,
-            "professeur": self.professeur.utilisateur.nom if self.professeur and self.professeur.utilisateur else None,
-            "date_creation": self.date_creation.isoformat() if self.date_creation else None
+            "tp": float(self.tp) if self.tp is not None else None,
+            "interrogation": float(self.interrogation) if self.interrogation is not None else None,
+            "examen": float(self.examen) if self.examen is not None else None,
+            "moyenne": float(self.moyenne) if self.moyenne is not None else None
         }
