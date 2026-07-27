@@ -24,149 +24,165 @@ def parse_date(date_string):
 @presences_bp.route("/", methods=["GET"])
 @jwt_required()
 def get_presences():
-    presences = Presence.query.all()
+    try:
+        presences = Presence.query.all()
 
-    return jsonify({
-        "status": "success",
-        "data": [presence.to_dict() for presence in presences]
-    }), 200
+        return jsonify({
+            "status": "success",
+            "data": [presence.to_dict() for presence in presences]
+        }), 200
+    except Exception as e:
+        import traceback
+        return jsonify({"status": "error", "message": str(e), "traceback": traceback.format_exc()}), 500
 
 
 @presences_bp.route("/<int:id>", methods=["GET"])
 @jwt_required()
 def get_presence(id):
-    presence = Presence.query.get(id)
+    try:
+        presence = Presence.query.get(id)
 
-    if not presence:
+        if not presence:
+            return jsonify({
+                "status": "error",
+                "message": "Présence introuvable."
+            }), 404
+
         return jsonify({
-            "status": "error",
-            "message": "Présence introuvable."
-        }), 404
-
-    return jsonify({
-        "status": "success",
-        "data": presence.to_dict()
-    }), 200
+            "status": "success",
+            "data": presence.to_dict()
+        }), 200
+    except Exception as e:
+        import traceback
+        return jsonify({"status": "error", "message": str(e), "traceback": traceback.format_exc()}), 500
 
 
 @presences_bp.route("/", methods=["POST"])
 @jwt_required()
 def create_presence():
-    data = request.get_json()
+    try:
+        data = request.get_json()
 
-    if not data:
-        return jsonify({
-            "status": "error",
-            "message": "Aucune donnée reçue."
-        }), 400
-
-    id_etudiant = data.get("id_etudiant")
-    date_presence = data.get("date_presence")
-
-    if id_etudiant is None or not date_presence:
-        return jsonify({
-            "status": "error",
-            "message": "Les champs id_etudiant et date_presence sont requis."
-        }), 400
-
-    etudiant = Etudiant.query.get(id_etudiant)
-
-    if not etudiant:
-        return jsonify({
-            "status": "error",
-            "message": "Étudiant introuvable."
-        }), 404
-
-    parsed_date = parse_date(date_presence)
-    if not parsed_date:
-        return jsonify({
-            "status": "error",
-            "message": "Le format de date_presence doit être AAAA-MM-JJ."
-        }), 400
-
-    cours = None
-    if data.get("id_cours") is not None:
-        cours = Cours.query.get(data.get("id_cours"))
-        if not cours:
+        if not data:
             return jsonify({
                 "status": "error",
-                "message": "Cours introuvable."
-            }), 404
+                "message": "Aucune donnée reçue."
+            }), 400
 
-    presence = Presence(
-        id_etudiant=id_etudiant,
-        id_cours=data.get("id_cours"),
-        date_presence=parsed_date,
-        statut=data.get("statut", "present"),
-        commentaire=data.get("commentaire")
-    )
+        id_etudiant = data.get("id_etudiant")
+        date_presence = data.get("date_presence")
 
-    db.session.add(presence)
-    db.session.commit()
+        if id_etudiant is None or not date_presence:
+            return jsonify({
+                "status": "error",
+                "message": "Les champs id_etudiant et date_presence sont requis."
+            }), 400
 
-    return jsonify({
-        "status": "success",
-        "message": "Présence enregistrée.",
-        "data": presence.to_dict()
-    }), 201
+        etudiant = Etudiant.query.get(id_etudiant)
 
-
-@presences_bp.route("/<int:id>", methods=["PUT"])
-@jwt_required()
-def update_presence(id):
-    presence = Presence.query.get(id)
-
-    if not presence:
-        return jsonify({
-            "status": "error",
-            "message": "Présence introuvable."
-        }), 404
-
-    data = request.get_json()
-
-    if not data:
-        return jsonify({
-            "status": "error",
-            "message": "Aucune donnée reçue."
-        }), 400
-
-    if data.get("id_etudiant") is not None:
-        etudiant = Etudiant.query.get(data["id_etudiant"])
         if not etudiant:
             return jsonify({
                 "status": "error",
                 "message": "Étudiant introuvable."
             }), 404
-        presence.id_etudiant = data["id_etudiant"]
 
-    if data.get("id_cours") is not None:
-        cours = Cours.query.get(data["id_cours"])
-        if not cours:
-            return jsonify({
-                "status": "error",
-                "message": "Cours introuvable."
-            }), 404
-        presence.id_cours = data["id_cours"]
-
-    if data.get("date_presence"):
-        parsed_date = parse_date(data["date_presence"])
+        parsed_date = parse_date(date_presence)
         if not parsed_date:
             return jsonify({
                 "status": "error",
                 "message": "Le format de date_presence doit être AAAA-MM-JJ."
             }), 400
-        presence.date_presence = parsed_date
 
-    presence.statut = data.get("statut", presence.statut)
-    presence.commentaire = data.get("commentaire", presence.commentaire)
+        cours = None
+        if data.get("id_cours") is not None:
+            cours = Cours.query.get(data.get("id_cours"))
+            if not cours:
+                return jsonify({
+                    "status": "error",
+                    "message": "Cours introuvable."
+                }), 404
 
-    db.session.commit()
+        presence = Presence(
+            id_etudiant=id_etudiant,
+            id_cours=data.get("id_cours"),
+            date_presence=parsed_date,
+            statut=data.get("statut", "present"),
+            commentaire=data.get("commentaire")
+        )
 
-    return jsonify({
-        "status": "success",
-        "message": "Présence modifiée.",
-        "data": presence.to_dict()
-    }), 200
+        db.session.add(presence)
+        db.session.commit()
+
+        return jsonify({
+            "status": "success",
+            "message": "Présence enregistrée.",
+            "data": presence.to_dict()
+        }), 201
+    except Exception as e:
+        import traceback
+        return jsonify({"status": "error", "message": str(e), "traceback": traceback.format_exc()}), 500
+
+
+@presences_bp.route("/<int:id>", methods=["PUT"])
+@jwt_required()
+def update_presence(id):
+    try:
+        presence = Presence.query.get(id)
+
+        if not presence:
+            return jsonify({
+                "status": "error",
+                "message": "Présence introuvable."
+            }), 404
+
+        data = request.get_json()
+
+        if not data:
+            return jsonify({
+                "status": "error",
+                "message": "Aucune donnée reçue."
+            }), 400
+
+        if data.get("id_etudiant") is not None:
+            etudiant = Etudiant.query.get(data["id_etudiant"])
+            if not etudiant:
+                return jsonify({
+                    "status": "error",
+                    "message": "Étudiant introuvable."
+                }), 404
+            presence.id_etudiant = data["id_etudiant"]
+
+        if data.get("id_cours") is not None:
+            cours = Cours.query.get(data["id_cours"])
+            if not cours:
+                return jsonify({
+                    "status": "error",
+                    "message": "Cours introuvable."
+                }), 404
+            presence.id_cours = data["id_cours"]
+
+        if data.get("date_presence"):
+            parsed_date = parse_date(data["date_presence"])
+            if not parsed_date:
+                return jsonify({
+                    "status": "error",
+                    "message": "Le format de date_presence doit être AAAA-MM-JJ."
+                }), 400
+            presence.date_presence = parsed_date
+
+        presence.statut = data.get("statut", presence.statut)
+        presence.commentaire = data.get("commentaire", presence.commentaire)
+
+        db.session.commit()
+
+        return jsonify({
+            "status": "success",
+            "message": "Présence modifiée.",
+            "data": presence.to_dict()
+        }), 200
+    except Exception as e:
+        import traceback
+        return jsonify({"status": "error", "message": str(e), "traceback": traceback.format_exc()}), 500
 
 
 @presences_bp.route("/<int:id>", methods=["DELETE"])
