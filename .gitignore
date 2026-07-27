@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Environment variables
+.env
+
+# Database files
+*.sqlite3
+*.db
+
+# Uploads and runtime files
+uploads/
+
+# Pytest cache
+.pytest_cache/
+
+# Migrations cache
+*.pyc
+
+# IDE files
+.vscode/
+.idea/
