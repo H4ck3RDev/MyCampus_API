@@ -18,6 +18,10 @@ from routes.professeurs import professeurs_bp
 from routes.cours import cours_bp
 from routes.affectations_professeurs import affectations_professeurs_bp
 from routes.inscriptions import inscriptions_bp
+from routes.notes import notes_bp
+from routes.messages import messages_bp
+from routes.notifications import notifications_bp
+from routes.presences import presences_bp
 
 from models import Role, Utilisateur
 
@@ -41,6 +45,10 @@ app.register_blueprint(professeurs_bp)
 app.register_blueprint(cours_bp)
 app.register_blueprint(affectations_professeurs_bp)
 app.register_blueprint(inscriptions_bp)
+app.register_blueprint(notes_bp)
+app.register_blueprint(messages_bp)
+app.register_blueprint(notifications_bp)
+app.register_blueprint(presences_bp)
 
 jwt = JWTManager(app)
 

@@ -9,6 +9,11 @@ from models.professeur import Professeur
 from models.affectation_professeur import AffectationProfesseur
 from models.inscription import Inscription
 from .cours import Cours
+from .note import Note
+from .message import Message
+from .notification import Notification
+from .presence import Presence
+from .document import Document
 
 
 __all__ = [
@@ -33,5 +38,15 @@ __all__ = [
     
     "Inscription",
     
-    "Cours"
+    "Cours",
+    
+    "Note",
+    
+    "Message",
+    
+    "Notification",
+    
+    "Presence",
+    
+    "Document"
 ]

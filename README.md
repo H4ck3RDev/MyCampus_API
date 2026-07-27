@@ -8,6 +8,7 @@ API REST pour la gestion d'un système universitaire (campus), implémentée en 
 - Gestion des utilisateurs, rôles, étudiants, professeurs
 - Gestion des années académiques, facultés, départements, promotions
 - Gestion des cours, affectations de professeurs et inscriptions
+- Gestion des notes, messages, notifications et présences
 - Point d'entrée de vérification de connexion à la base de données
 
 ## Installation
@@ -69,6 +70,32 @@ L'API démarrera en local sur `http://127.0.0.1:5000`.
 
 - `GET /` : Accueil de l'API
 - `GET /test-db` : Vérifie la connexion à la base MySQL
+
+## Endpoints supplémentaires implémentés
+
+- `GET /notes/` : Liste des notes
+- `GET /notes/<id>` : Détail d'une note
+- `POST /notes/` : Créer une note
+- `PUT /notes/<id>` : Mettre à jour une note
+- `DELETE /notes/<id>` : Supprimer une note
+
+- `GET /messages/` : Liste des messages
+- `GET /messages/<id>` : Détail d'un message
+- `POST /messages/` : Envoyer un message
+- `PUT /messages/<id>` : Mettre à jour un message
+- `DELETE /messages/<id>` : Supprimer un message
+
+- `GET /notifications/` : Liste des notifications
+- `GET /notifications/<id>` : Détail d'une notification
+- `POST /notifications/` : Créer une notification
+- `PUT /notifications/<id>` : Mettre à jour une notification
+- `DELETE /notifications/<id>` : Supprimer une notification
+
+- `GET /presences/` : Liste des présences
+- `GET /presences/<id>` : Détail d'une présence
+- `POST /presences/` : Enregistrer une présence
+- `PUT /presences/<id>` : Mettre à jour une présence
+- `DELETE /presences/<id>` : Supprimer une présence
 
 ## Notes
 
