@@ -97,6 +97,12 @@ L'API démarrera en local sur `http://127.0.0.1:5000`.
 - `PUT /presences/<id>` : Mettre à jour une présence
 - `DELETE /presences/<id>` : Supprimer une présence
 
+- `GET /documents/` : Liste des documents
+- `GET /documents/<id>` : Détail d'un document
+- `POST /documents/` : Créer un document
+- `PUT /documents/<id>` : Mettre à jour un document
+- `DELETE /documents/<id>` : Supprimer un document
+
 ## Notes
 
 - Le projet est conçu pour une base de données MySQL via SQLAlchemy et PyMySQL.

@@ -22,6 +22,7 @@ from routes.notes import notes_bp
 from routes.messages import messages_bp
 from routes.notifications import notifications_bp
 from routes.presences import presences_bp
+from routes.documents import documents_bp
 
 from models import Role, Utilisateur
 
@@ -49,6 +50,7 @@ app.register_blueprint(notes_bp)
 app.register_blueprint(messages_bp)
 app.register_blueprint(notifications_bp)
 app.register_blueprint(presences_bp)
+app.register_blueprint(documents_bp)
 
 jwt = JWTManager(app)
 
