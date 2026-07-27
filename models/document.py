@@ -14,6 +14,7 @@ class Document(db.Model):
     )
 
     nom = db.Column(
+        'nom_fichier',
         db.String(255),
         nullable=False
     )
@@ -36,11 +37,6 @@ class Document(db.Model):
         nullable=True
     )
 
-    date_creation = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
-    )
-
     utilisateur = db.relationship(
         "Utilisateur",
         backref="documents"
@@ -54,6 +50,5 @@ class Document(db.Model):
             "chemin": self.chemin,
             "type_document": self.type_document,
             "id_utilisateur": self.id_utilisateur,
-            "utilisateur": self.utilisateur.email if self.utilisateur else None,
-            "date_creation": self.date_creation.isoformat() if self.date_creation else None
+            "utilisateur": self.utilisateur.email if self.utilisateur else None
         }

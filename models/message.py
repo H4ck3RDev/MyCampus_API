@@ -14,7 +14,8 @@ class Message(db.Model):
     )
 
     sujet = db.Column(
-        db.String(150),
+        'objet',
+        db.String(100),
         nullable=False
     )
 
@@ -44,9 +45,9 @@ class Message(db.Model):
         default=datetime.utcnow
     )
 
-    statut = db.Column(
-        db.String(20),
-        default="envoyé"
+    lu = db.Column(
+        db.Boolean,
+        default=False
     )
 
     expediteur = db.relationship(
@@ -72,5 +73,5 @@ class Message(db.Model):
             "id_destinataire": self.id_destinataire,
             "destinataire": self.destinataire.email if self.destinataire else None,
             "date_envoi": self.date_envoi.isoformat() if self.date_envoi else None,
-            "statut": self.statut
+            "lu": bool(self.lu)
         }

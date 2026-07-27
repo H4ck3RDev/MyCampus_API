@@ -35,18 +35,8 @@ class Presence(db.Model):
     )
 
     statut = db.Column(
-        db.Enum("present", "absent", "justifie"),
-        default="present"
-    )
-
-    commentaire = db.Column(
-        db.String(255),
-        nullable=True
-    )
-
-    date_creation = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
+        db.Enum("Présent", "Absent", "Retard"),
+        default="Présent"
     )
 
     etudiant = db.relationship(
@@ -68,7 +58,5 @@ class Presence(db.Model):
             "id_cours": self.id_cours,
             "cours": self.cours.nom_cours if self.cours else None,
             "date_presence": self.date_presence.isoformat() if self.date_presence else None,
-            "statut": self.statut,
-            "commentaire": self.commentaire,
-            "date_creation": self.date_creation.isoformat() if self.date_creation else None
+            "statut": self.statut
         }

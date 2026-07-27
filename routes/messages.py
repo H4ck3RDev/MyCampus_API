@@ -84,7 +84,7 @@ def create_message():
             contenu=contenu,
             id_expediteur=id_expediteur,
             id_destinataire=id_destinataire,
-            statut=data.get("statut", "envoyé")
+            lu=data.get("lu", False)
         )
 
         db.session.add(message)
@@ -124,7 +124,7 @@ def update_message(id):
         message.contenu = data.get("contenu", message.contenu)
         message.id_expediteur = data.get("id_expediteur", message.id_expediteur)
         message.id_destinataire = data.get("id_destinataire", message.id_destinataire)
-        message.statut = data.get("statut", message.statut)
+        message.lu = data.get("lu", message.lu)
 
         db.session.commit()
 

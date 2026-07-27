@@ -106,8 +106,7 @@ def create_presence():
             id_etudiant=id_etudiant,
             id_cours=data.get("id_cours"),
             date_presence=parsed_date,
-            statut=data.get("statut", "present"),
-            commentaire=data.get("commentaire")
+            statut=data.get("statut", "Présent")
         )
 
         db.session.add(presence)
@@ -171,7 +170,6 @@ def update_presence(id):
             presence.date_presence = parsed_date
 
         presence.statut = data.get("statut", presence.statut)
-        presence.commentaire = data.get("commentaire", presence.commentaire)
 
         db.session.commit()
 

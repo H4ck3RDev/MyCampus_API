@@ -80,8 +80,7 @@ def create_notification():
         notification = Notification(
             titre=titre,
             contenu=contenu,
-            id_utilisateur=id_utilisateur,
-            lu=data.get("lu", False)
+            id_utilisateur=id_utilisateur
         )
 
         db.session.add(notification)
@@ -120,7 +119,6 @@ def update_notification(id):
         notification.titre = data.get("titre", notification.titre)
         notification.contenu = data.get("contenu", notification.contenu)
         notification.id_utilisateur = data.get("id_utilisateur", notification.id_utilisateur)
-        notification.lu = data.get("lu", notification.lu)
 
         db.session.commit()
 
