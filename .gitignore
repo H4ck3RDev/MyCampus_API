@@ -28,3 +28,6 @@ uploads/
 # IDE files
 .vscode/
 .idea/
+
+# Temporary scripts
+temp_*.py
